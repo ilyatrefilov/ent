@@ -64,17 +64,20 @@ func (tx *SQLiteTx) Rollback() error {
 }
 
 // init makes sure that foreign_keys support is enabled.
+// NOTE: don't check for foreign_keys status, because it can be changed by the caller app.
+// This check is only needed in rare/unusual case of opening database with fk=0
 func (d *SQLite) init(ctx context.Context) error {
-	on, err := exist(ctx, d, "PRAGMA foreign_keys")
-	if err != nil {
-		return fmt.Errorf("sqlite: check foreign_keys pragma: %w", err)
-	}
-	if !on {
-		// foreign_keys pragma is off, either enable it by execute "PRAGMA foreign_keys=ON"
-		// or add the following parameter in the connection string "_fk=1".
-		return fmt.Errorf("sqlite: foreign_keys pragma is off: missing %q in the connection string", "_fk=1")
-	}
 	return nil
+	// on, err := exist(ctx, d, "PRAGMA foreign_keys")
+	// if err != nil {
+	// 	return fmt.Errorf("sqlite: check foreign_keys pragma: %w", err)
+	// }
+	// if !on {
+	// 	// foreign_keys pragma is off, either enable it by execute "PRAGMA foreign_keys=ON"
+	// 	// or add the following parameter in the connection string "_fk=1".
+	// 	return fmt.Errorf("sqlite: foreign_keys pragma is off: missing %q in the connection string", "_fk=1")
+	// }
+	// return nil
 }
 
 func (d *SQLite) tableExist(ctx context.Context, conn dialect.ExecQuerier, name string) (bool, error) {
