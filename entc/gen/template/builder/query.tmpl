@@ -70,6 +70,10 @@ func ({{ $receiver }} *{{ $builder }}) Order(o ...{{ $.Package }}.OrderOption) *
 	return {{ $receiver }}
 }
 
+func ({{ $receiver }} *{{ $builder }}) HasOrder() bool {
+	return len({{ $receiver }}.order) != 0
+}
+
 {{/* this code has similarity with edge queries in client.tmpl */}}
 {{ range $e := $.Edges }}
 	{{ $edge_builder := print $e.Type.QueryName }}

@@ -43,6 +43,8 @@ type Query interface {
 	// WhereP appends storage-level predicates to the query builder. Using this method, users
 	// can use type-assertion to append predicates that do not depend on any generated package.
 	WhereP(...func({{ $.Storage.Builder }}))
+	// Reports if query has some order.
+	HasOrder() bool
 }
 
 // The Func type is an adapter that allows ordinary functions to be used as interceptors.
@@ -134,6 +136,7 @@ type query[T any, P ~func({{ $.Storage.Builder }}), R ~func({{ $.Storage.Builder
 		Unique(bool) T
 		Order(...R) T
 		Where(...P) T
+		HasOrder() bool
 	}
 }
 
@@ -159,6 +162,10 @@ func (q query[T, P, R]) Order(orders ...func({{ $.Storage.Builder }})) {
 		rs[i] = orders[i]
 	}
 	q.tq.Order(rs...)
+}
+
+func (q query[T, P, R]) HasOrder() bool {
+	return q.tq.HasOrder()
 }
 
 func (q query[T, P, R]) WhereP(ps ...func({{ $.Storage.Builder }})) {
